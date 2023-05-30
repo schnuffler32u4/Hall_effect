@@ -152,6 +152,9 @@ n2err = np.abs(n2) * np.sqrt((mu2err/mu2)**2 + (sigma2err/sigma2)**2)
 
 # Determining the band gap based on the temperature measurements for the first plate
 
+Eg1arr = []
+Eg1errarr = []
+
 for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
     if "csv" in file:
         data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A/' + file)
@@ -160,20 +163,18 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
         data.dropna(inplace=True)
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
-        popt, pcov = curve_fit(temp_dep, lVh, beta, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
         # print(data)
-        plt.errorbar(lVh, beta, xerr=0.00003, yerr=0.003, label="Data")
-        plt.plot(lVh, temp_dep(lVh, *popt), label="Fit")
+        plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
+        plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
         plt.savefig("Figures/" + file + ".png", dpi=500)
         plt.close()
-        # plt.title(str(np.average(data.Mag)))
-        # print(file + str(popt))
-        #plt.show()
 
-for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A'):
     if "csv" in file:
         data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A/' + file)
         data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
@@ -181,17 +182,56 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
         data.drop(data[data.VB2==0].index, inplace=True)
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
-        popt, pcov = curve_fit(temp_dep, lVh, beta, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
         plt.errorbar(lVh, beta, xerr=0.00003, yerr=0.003, label="Data")
-        plt.plot(lVh, temp_dep(lVh, *popt), label="Fit")
+        plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
-        # plt.title(str(np.average(data.Mag)))
-        # print(file + str(popt))
-        #plt.show()
+        plt.savefig("Figures/" + file + ".png", dpi=500)
+
+weights = np.divide(1, np.power(Eg1errarr,2))
+Eg1 = np.sum(np.multiply(weights, Eg1arr)) / np.sum(weights)
+Eg1err = np.sqrt(1/np.sum(weights))
 
 # Determining the band gap based on the temperature measurements for the second plate
+
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_plate'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.drop(data[data.VB2==0].index, inplace=True)
+        data.dropna(inplace=True)
+        lVh = np.log(np.abs(data.VB2))
+        beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
+        popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        # print(data)
+        plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
+        plt.plot(beta, temp_dep(beta, *popt), label="Fit")
+        plt.ylabel("Logarithnm of Voltage")
+        plt.xlabel("Beta")
+        plt.legend()
+        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.close()
+
+
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_plate'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.dropna(inplace=True)
+        data.drop(data[data.VB2==0].index, inplace=True)
+        lVh = np.log(np.abs(data.VB2))
+        beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
+        popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
+        plt.plot(beta, temp_dep(beta, *popt), label="Fit")
+        plt.ylabel("Logarithnm of Voltage")
+        plt.xlabel("Beta")
+        plt.legend()
+        plt.savefig("Figures/" + file + ".png", dpi=500)
 
 output = 'Conductivity of the first plate: ' + str(sigma1) + "±" + str(sigma1err) + "\n"
 output += 'Conductivity of the second plate: ' + str(sigma2) + "±" + str(sigma2err) + "\n"
