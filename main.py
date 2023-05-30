@@ -48,14 +48,14 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_first_plate'):
         popt, pcov = curve_fit(voltamp_characteristic, data.VB1, data.IA1, maxfev=500000, sigma=0.00003*np.ones(len(data.IA1)))
         sigma1arr.append(2*popt[0])
         sigma1errarr.append(2*np.sqrt(np.diag(pcov))[0])
-        plt.errorbar(data.VB1, data.IA1, xerr=0.003, yerr=0.00003, label="Data")
+        plt.errorbar(data.VB1, data.IA1, xerr=data.VB1*1e-2, yerr=data.IA1*1e-2, label="Data")
         plt.plot(data.VB1, voltamp_characteristic(data.VB1, *popt), label="Fit")
         plt.xlabel("Voltage[V]")
         plt.ylabel("Current[A]")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "_first_plate" + ".png", dpi=500)
         plt.close()
-        # plt.show()
+
 weights = 1 / np.power(sigma1errarr,2)
 sigma1 = np.sum(np.multiply(weights, sigma1arr)) / np.sum(weights)
 sigma1err = np.sqrt(1/np.sum(weights))
@@ -73,15 +73,13 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_second_plate'):
         popt, pcov = curve_fit(voltamp_characteristic, data.VB1, data.IA1, maxfev=500000, sigma=0.00003*np.ones(len(data.IA1)))
         sigma2arr.append(2*popt[0])
         sigma2errarr.append(2*np.sqrt(np.diag(pcov))[0])
-        plt.errorbar(data.VB1, data.IA1, xerr=0.003, yerr=0.00003, label="Data")
+        plt.errorbar(data.VB1, data.IA1, xerr=data.VB1*1e-2, yerr=data.IA1*1e-2, label="Data")
         plt.plot(data.VB1, voltamp_characteristic(data.VB1, *popt), label="Fit")
         plt.xlabel("Voltage[V]")
         plt.ylabel("Current[A]")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "_second_plate" + ".png", dpi=500)
         plt.close()
-        # print(file + str(popt))
-        # plt.show()
 
 weights = 1 / np.power(sigma2errarr,2)
 sigma2 = np.sum(np.multiply(weights, sigma2arr)) / np.sum(weights)
@@ -102,16 +100,14 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_first_plate'):
         mu1 = -popt[0] * sigma1 * 1e-3 / np.average(data.Mag)
         mu1array.append(mu1)
         mu1errarray.append(np.abs(mu1) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma1err/sigma1)**2 + 4e-4))
-        plt.errorbar(data.IA1, data.VB2, xerr=0.00003, yerr=0.003, label="Data")
+        plt.errorbar(data.IA1, data.VB2, xerr=data.IA1*1e-2, yerr=np.abs(data.VB2*1e-2), label="Data")
         plt.plot(data.IA1, hall_voltage(data.IA1, *popt), label="Fit")
         plt.ylabel("Voltage[V]")
         plt.xlabel("Current[A]")
         plt.legend()
         plt.title(str(np.average(data.Mag)))
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "first_plate" + ".png", dpi=500)
         plt.close()
-        # print(file + str(popt))
-        # plt.show()
 
 weights = np.divide(1, np.power(mu1errarray,2))
 mu1 = np.sum(np.multiply(weights, mu1array)) / np.sum(weights)
@@ -133,16 +129,14 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_second_plate'):
         mu2 = -popt[0] * sigma2 * 1e-3 / np.average(data.Mag)
         mu2array.append(mu2)
         mu2errarray.append(np.abs(mu2) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma2err/sigma2)**2 + 4e-4))
-        plt.errorbar(data.IA1, data.VB2, xerr=0.00003, yerr=0.003, label="Data")
+        plt.errorbar(data.IA1, data.VB2, xerr=data.IA1*1e-2, yerr=data.VB2*1e-2, label="Data")
         plt.plot(data.IA1, hall_voltage(data.IA1, *popt), label="Fit")
         plt.ylabel("Voltage[V]")
         plt.xlabel("Current[A]")
         plt.legend()
         plt.title(str(np.average(data.Mag)))
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "_second_plate" +".png", dpi=500)
         plt.close()
-        # print(file + str(popt))
-        #plt.show()
 
 weights = np.divide(1, np.power(mu2errarray,2))
 mu2 = np.sum(np.multiply(weights, mu2array)) / np.sum(weights)
@@ -164,13 +158,15 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
         popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        Eg1arr.append(popt[0]*2)
+        Eg1errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         # print(data)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "5A_1st_plate" + ".png", dpi=500)
         plt.close()
 
 
@@ -183,12 +179,15 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A'):
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
         popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
-        plt.errorbar(lVh, beta, xerr=0.00003, yerr=0.003, label="Data")
+        Eg1arr.append(popt[0]*2)
+        Eg1errarr.append(np.sqrt(np.diag(pcov)[0])*2)
+        plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "4A_1st_plate" + ".png", dpi=500)
+        plt.close()
 
 weights = np.divide(1, np.power(Eg1errarr,2))
 Eg1 = np.sum(np.multiply(weights, Eg1arr)) / np.sum(weights)
@@ -196,23 +195,26 @@ Eg1err = np.sqrt(1/np.sum(weights))
 
 # Determining the band gap based on the temperature measurements for the second plate
 
+Eg2arr = []
+Eg2errarr = []
 
 for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_plate'):
     if "csv" in file:
-        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A/' + file)
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_plate/' + file)
         data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
         data.drop(data[data.VB2==0].index, inplace=True)
         data.dropna(inplace=True)
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
         popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
-        # print(data)
+        Eg2arr.append(popt[0]*2)
+        Eg2errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "5A_2nd_plate" + ".png", dpi=500)
         plt.close()
 
 
@@ -226,12 +228,78 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_
         lVh = np.log(np.abs(data.VB2))
         beta = 1 / (scipy.constants.k * (data.tvolt * 100 + 273.15))
         popt, pcov = curve_fit(temp_dep, beta, lVh, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)), p0=[1e20, 1e20])
+        Eg2arr.append(popt[0]*2)
+        Eg2errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
         plt.ylabel("Logarithnm of Voltage")
         plt.xlabel("Beta")
         plt.legend()
-        plt.savefig("Figures/" + file + ".png", dpi=500)
+        plt.savefig("Figures/" + file + "4A_2nd_plate" + ".png", dpi=500)
+        plt.close()
+
+weights = np.divide(1, np.power(Eg2errarr,2))
+Eg2 = np.sum(np.multiply(weights, Eg2arr)) / np.sum(weights)
+Eg2err = np.sqrt(1/np.sum(weights))
+
+# Creating graphs for Votlage vs Temprature
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.dropna(inplace=True)
+        temp = data.tvolt * 100 + 273.15 
+        plt.errorbar(temp, data.VB2, xerr=temp*1e-2, yerr=np.abs(data.VB2*1e-2), label="Data")
+        plt.ylabel("Hall Voltage[V]")
+        plt.xlabel("Temperature[K]")
+        plt.legend()
+        plt.savefig("Figures/straight/" + file + "5A_1st_plate" + ".png", dpi=500)
+        plt.close()
+
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.dropna(inplace=True)
+        temp = data.tvolt * 100 + 273.15 
+        plt.errorbar(temp, data.VB2, xerr=temp*1e-2, yerr=np.abs(data.VB2*1e-2), label="Data")
+        plt.ylabel("Hall Voltage[V]")
+        plt.xlabel("Temperature[K]")
+        plt.legend()
+        plt.savefig("Figures/straight/" + file + "4A_1st_plate" + ".png", dpi=500)
+        plt.close()
+
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_plate'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_plate/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.dropna(inplace=True)
+        temp = data.tvolt * 100 + 273.15 
+        plt.errorbar(temp, data.VB2, xerr=temp*1e-2, yerr=data.VB2*1e-2, label="Data")
+        plt.ylabel("Hall Voltage[V]")
+        plt.xlabel("Temperature[K]")
+        plt.legend()
+        plt.savefig("Figures/straight/" + file + "5A_2nd_plate" + ".png", dpi=500)
+        plt.close()
+
+
+
+for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_plate'):
+    if "csv" in file:
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A/' + file)
+        data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
+        data.dropna(inplace=True)
+        temp = data.tvolt * 100 + 273.15 
+        plt.errorbar(temp, data.VB2, xerr=temp*1e-2, yerr=np.abs(data.VB2*1e-2), label="Data")
+        plt.ylabel("Hall Voltage[V]")
+        plt.xlabel("Temperature[K]")
+        plt.legend()
+        plt.savefig("Figures/straight/" + file + "4A_2nd_plate" + ".png", dpi=500)
+        plt.close()
+
 
 output = 'Conductivity of the first plate: ' + str(sigma1) + "±" + str(sigma1err) + "\n"
 output += 'Conductivity of the second plate: ' + str(sigma2) + "±" + str(sigma2err) + "\n"
@@ -239,6 +307,8 @@ output += 'Charge mobility of the first plate: ' + str(mu1) + "±" + str(mu1err)
 output += 'Dopant density of the first plate: ' + str(n1) + "±" + str(n1err) + "\n"
 output += 'Charge mobility of the second plate: ' + str(mu2) + "±" + str(mu2err) + "\n"
 output += 'Dopant density of the second plate: ' + str(n2) + "±" + str(n2err) + "\n"
+output += 'The bandgap of the first plate: ' + str(Eg1 / scipy.constants.e) + "±" + str(Eg1err / scipy.constants.e) + "eV" + "\n"
+output += 'The bandgap of the second plate: ' + str(Eg2 / scipy.constants.e) + "±" + str(Eg2err / scipy.constants.e) + "eV" + "\n"
 
 
 with open('output.txt', 'w') as f:
