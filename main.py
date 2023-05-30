@@ -101,7 +101,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_first_plate'):
         popt, pcov = curve_fit(hall_voltage, data.IA1, data.VB2, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)))
         mu1 = -popt[0] * sigma1 * 1e-3 / np.average(data.Mag)
         mu1array.append(mu1)
-        mu1errarray.append(np.abs(mu1) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma1err/sigma1)**2))
+        mu1errarray.append(np.abs(mu1) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma1err/sigma1)**2 + 4e-4))
         plt.errorbar(data.IA1, data.VB2, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(data.IA1, hall_voltage(data.IA1, *popt), label="Fit")
         plt.ylabel("Voltage[V]")
@@ -117,7 +117,7 @@ weights = np.divide(1, np.power(mu1errarray,2))
 mu1 = np.sum(np.multiply(weights, mu1array)) / np.sum(weights)
 mu1err = np.sqrt(1/np.sum(weights))
 n1 = 1 / mu1 * sigma1 / scipy.constants.e
-n1err = np.abs(n1) * np.sqrt((mu1/mu1err)**2 + (sigma1err/sigma1)**2)
+n1err = np.abs(n1) * np.sqrt((mu1err/mu1)**2 + (sigma1err/sigma1)**2)
 
 # Determining the slope of the Hall voltage the second plate for different values of magnetic field
 
@@ -132,7 +132,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_second_plate'):
         popt, pcov = curve_fit(hall_voltage, data.IA1, data.VB2, maxfev=500000, sigma=0.003*np.ones(len(data.VB2)))
         mu2 = -popt[0] * sigma2 * 1e-3 / np.average(data.Mag)
         mu2array.append(mu2)
-        mu2errarray.append(np.abs(mu2) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma2err/sigma2)**2))
+        mu2errarray.append(np.abs(mu2) * np.sqrt((np.sqrt(np.diag(pcov))[0]/popt[0])**2 + (sigma2err/sigma2)**2 + 4e-4))
         plt.errorbar(data.IA1, data.VB2, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(data.IA1, hall_voltage(data.IA1, *popt), label="Fit")
         plt.ylabel("Voltage[V]")
@@ -148,7 +148,7 @@ weights = np.divide(1, np.power(mu2errarray,2))
 mu2 = np.sum(np.multiply(weights, mu2array)) / np.sum(weights)
 mu2err = np.sqrt(1/np.sum(weights))
 n2 = 1 / mu2 * sigma2 / scipy.constants.e
-n2err = np.abs(n2) * np.sqrt((mu2/mu2err)**2 + (sigma2err/sigma2)**2)
+n2err = np.abs(n2) * np.sqrt((mu2err/mu2)**2 + (sigma2err/sigma2)**2)
 
 # Determining the band gap based on the temperature measurements for the first plate
 
