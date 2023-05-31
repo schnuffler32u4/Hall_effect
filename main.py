@@ -53,6 +53,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_first_plate'):
         plt.xlabel("Voltage[V]")
         plt.ylabel("Current[A]")
         plt.legend()
+        plt.title("Voltage drop across the first plate vs current")
         plt.savefig("Figures/" + file + "_first_plate" + ".png", dpi=500)
         plt.close()
 
@@ -78,6 +79,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_second_plate'):
         plt.xlabel("Voltage[V]")
         plt.ylabel("Current[A]")
         plt.legend()
+        plt.title("Voltage drop across the second plate vs current")
         plt.savefig("Figures/" + file + "_second_plate" + ".png", dpi=500)
         plt.close()
 
@@ -105,7 +107,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_first_plate'):
         plt.ylabel("Voltage[V]")
         plt.xlabel("Current[A]")
         plt.legend()
-        plt.title(str(np.average(data.Mag)))
+        plt.title("Hall voltage vs current for first plate (B=" + str(np.average(data.Mag))[:6] + "T)")
         plt.savefig("Figures/" + file + "first_plate" + ".png", dpi=500)
         plt.close()
 
@@ -134,7 +136,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_current_second_plate'):
         plt.ylabel("Voltage[V]")
         plt.xlabel("Current[A]")
         plt.legend()
-        plt.title(str(np.average(data.Mag)))
+        plt.title("Hall voltage vs current for second plate (B=" + str(np.average(data.Mag))[:6] + "T)")
         plt.savefig("Figures/" + file + "_second_plate" +".png", dpi=500)
         plt.close()
 
@@ -163,8 +165,9 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
         # print(data)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
-        plt.ylabel("Logarithnm of Voltage")
-        plt.xlabel("Beta")
+        plt.ylabel("Logarithnm of Voltage[ln(V)]")
+        plt.xlabel("Beta[1/J]")
+        plt.title("Hall Voltage logarithm vs β for the first plate")
         plt.legend()
         plt.savefig("Figures/" + file + "5A_1st_plate" + ".png", dpi=500)
         plt.close()
@@ -183,8 +186,9 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A'):
         Eg1errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
-        plt.ylabel("Logarithnm of Voltage")
-        plt.xlabel("Beta")
+        plt.ylabel("Logarithnm of Voltage[ln(V)]")
+        plt.xlabel("Beta[1/J]")
+        plt.title("Hall Voltage logarithm vs β for the first plate")
         plt.legend()
         plt.savefig("Figures/" + file + "4A_1st_plate" + ".png", dpi=500)
         plt.close()
@@ -211,8 +215,9 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_
         Eg2errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
-        plt.ylabel("Logarithnm of Voltage")
-        plt.xlabel("Beta")
+        plt.title("Hall Voltage logarithm vs β for the second plate")
+        plt.ylabel("Logarithnm of Voltage[ln(V)]")
+        plt.xlabel("Beta[1/J]")
         plt.legend()
         plt.savefig("Figures/" + file + "5A_2nd_plate" + ".png", dpi=500)
         plt.close()
@@ -232,8 +237,9 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_
         Eg2errarr.append(np.sqrt(np.diag(pcov)[0])*2)
         plt.errorbar(beta, lVh, xerr=0.00003, yerr=0.003, label="Data")
         plt.plot(beta, temp_dep(beta, *popt), label="Fit")
-        plt.ylabel("Logarithnm of Voltage")
-        plt.xlabel("Beta")
+        plt.title("Hall Voltage logarithm vs β for the second plate")
+        plt.ylabel("Logarithnm of Voltage[ln(V)]")
+        plt.xlabel("Beta[1/J]")
         plt.legend()
         plt.savefig("Figures/" + file + "4A_2nd_plate" + ".png", dpi=500)
         plt.close()
@@ -254,6 +260,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A'):
         plt.ylabel("Hall Voltage[V]")
         plt.xlabel("Temperature[K]")
         plt.legend()
+        plt.title("Temperature vs Hall Voltage for the first plate")
         plt.savefig("Figures/straight/" + file + "5A_1st_plate" + ".png", dpi=500)
         plt.close()
 
@@ -268,6 +275,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A'):
         plt.ylabel("Hall Voltage[V]")
         plt.xlabel("Temperature[K]")
         plt.legend()
+        plt.title("Temperature vs Hall Voltage for the first plate")
         plt.savefig("Figures/straight/" + file + "4A_1st_plate" + ".png", dpi=500)
         plt.close()
 
@@ -282,6 +290,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_
         plt.ylabel("Hall Voltage[V]")
         plt.xlabel("Temperature[K]")
         plt.legend()
+        plt.title("Temperature vs Hall Voltage for the second plate")
         plt.savefig("Figures/straight/" + file + "5A_2nd_plate" + ".png", dpi=500)
         plt.close()
 
@@ -289,7 +298,7 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_5A_2nd_
 
 for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_plate'):
     if "csv" in file:
-        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A/' + file)
+        data = pd.read_csv('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_plate/' + file)
         data.rename(columns={"Magn. flux density B_A1 / mT": "Mag", "Voltage U_B2 / V": "VB2", "Voltage U_B1 / V": "VB1", "Current I_A1 / A": "IA1", "Voltage U_A2 / V": "tvolt"}, inplace=True)
         data.dropna(inplace=True)
         temp = data.tvolt * 100 + 273.15 
@@ -297,9 +306,25 @@ for file in os.listdir('Measurements/Hallvoltage_vs_temperature/mag_curr_4A_2nd_
         plt.ylabel("Hall Voltage[V]")
         plt.xlabel("Temperature[K]")
         plt.legend()
+        plt.title("Temperature vs Hall Voltage for the second plate")
         plt.savefig("Figures/straight/" + file + "4A_2nd_plate" + ".png", dpi=500)
         plt.close()
 
+# Plotting the electron drift velocity for both plates as a function of current
+
+plt.plot(np.linspace(2,30, 1000), 1e-3*np.linspace(2,30,1000)/(1e-3*10e-3) / np.abs(sigma1 * mu1))
+plt.xlabel("Current(mA)")
+plt.ylabel("Drift velocity(m/s)")
+plt.title("Drift velocity versus current for the first plate")
+plt.savefig("Figures/Drift_velocity_vs_current_first_plate.png", dpi=500)
+plt.close()
+
+plt.plot(np.linspace(2,30, 1000), 1e-3*np.linspace(2,30,1000)/(1e-3*10e-3) / np.abs(sigma2 * mu2))
+plt.xlabel("Current(mA)")
+plt.ylabel("Drift velocity(m/s)")
+plt.title("Drift velocity versus current for the second plate")
+plt.savefig("Figures/Drift_velocity_vs_current_second_plate.png", dpi=500)
+plt.close()
 
 output = 'Conductivity of the first plate: ' + str(sigma1) + "±" + str(sigma1err) + "\n"
 output += 'Conductivity of the second plate: ' + str(sigma2) + "±" + str(sigma2err) + "\n"
